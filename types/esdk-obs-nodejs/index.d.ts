@@ -87,331 +87,223 @@ declare namespace OBS {
          */
         name?: string
     }
+
+    interface InterfaceResult {
+        RequestId: string
+        Id2: string
+        // TODO: generics
+        [k: string]: any
+    }
+
+    interface CommonMsg {
+        /**
+         * HTTP status code. If the value is smaller than 300, the operation succeeds.
+         * Otherwise, the operation fails.
+         */
+        Status: number
+        /**
+         * Error code returned by the OBS server.
+         * If Status is smaller than 300, the value is null.
+         */
+        Code: string
+        /**
+         * Error description returned by the OBS server.
+         * If Status is smaller than 300, the value is null.
+         */
+        Message: string
+        /**
+         * Server ID.
+         * If Status is smaller than 300, the value is null.
+         */
+        HostId: string
+        /**
+         * Request ID returned by the OBS server
+         */
+        RequestId: string
+        /**
+         * Request ID2 returned by the OBS server
+         */
+        Id2: string
+        /**
+         * Detailed error code returned by the OBS server.
+         * If Status is smaller than 300, the value is null.
+         */
+        Indicator: string
+    }
+
+    interface Result {
+        InterfaceResult: InterfaceResult
+        CommonMsg: CommonMsg
+    }
+
+    type Callback = (err: any, result: Result) => any
 }
 
 /**
  * bucket
  */
 declare namespace OBS {
-    interface CreateBucket {
+    interface Bucket {
+        /**
+         * Bucket name.
+         */
         Bucket: string
+    }
+
+    interface CreateBucket extends Bucket {
+        /**
+         * Pre-defined access control policy that can be specified during the bucket creation
+         */
+        ACL?: string
+        // TODO: bucket region
+        /**
+         * Bucket storage class that can be specified during the bucket creation
+         */
+        StorageClass?: string
+        /**
+         * Bucket location
+         */
+        Location?: string
+    }
+
+    interface GetBucket {
+        /**
+         * Whether to query the bucket location
+         */
+        QueryLocation?: boolean
     }
 }
 
 declare class OBS {
     constructor(params: OBS.Options);
 
-    AbortMultipartUpload(param: any, callback: any): any;
+    abortMultipartUpload(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    AppendObject(param: any, callback: any): any;
-
-    Close(): void;
-
-    CompleteMultipartUpload(param: any, callback: any): any;
-
-    CopyObject(param: any, callback: any): any;
-
-    CopyPart(param: any, callback: any): any;
-
-    CreateBucket(param: any, callback: any): any;
-
-    CreatePostSignatureSync(param: any): any;
-
-    CreateSignedUrlSync(param: any): any;
-
-    CreateV2SignedUrlSync(param: any): any;
-
-    CreateV4PostSignatureSync(param: any): any;
-
-    CreateV4SignedUrlSync(param: any): any;
-
-    DeleteBucket(param: any, callback: any): any;
-
-    DeleteBucketCors(param: any, callback: any): any;
-
-    DeleteBucketDirectColdAccess(param: any, callback: any): any;
-
-    DeleteBucketEncryption(param: any, callback: any): any;
-
-    DeleteBucketLifecycle(param: any, callback: any): any;
-
-    DeleteBucketLifecycleConfiguration(param: any, callback: any): any;
-
-    DeleteBucketPolicy(param: any, callback: any): any;
-
-    DeleteBucketReplication(param: any, callback: any): any;
-
-    DeleteBucketTagging(param: any, callback: any): any;
-
-    DeleteBucketWebsite(param: any, callback: any): any;
-
-    DeleteBucketWebsiteConfiguration(param: any, callback: any): any;
-
-    DeleteObject(param: any, callback: any): any;
-
-    DeleteObjects(param: any, callback: any): any;
-
-    DownloadFile(param: any, callback: any): any;
-
-    Exec(funcName: any, param: any, callback: any): void;
-
-    Factory(param: any): void;
-
-    GetBucketAcl(param: any, callback: any): any;
-
-    GetBucketCors(param: any, callback: any): any;
-
-    GetBucketDirectColdAccess(param: any, callback: any): any;
-
-    GetBucketEncryption(param: any, callback: any): any;
-
-    GetBucketLifecycle(param: any, callback: any): any;
-
-    GetBucketLifecycleConfiguration(param: any, callback: any): any;
-
-    GetBucketLocation(param: any, callback: any): any;
-
-    GetBucketLogging(param: any, callback: any): any;
-
-    GetBucketLoggingConfiguration(param: any, callback: any): any;
-
-    GetBucketMetadata(param: any, callback: any): any;
-
-    GetBucketNotification(param: any, callback: any): any;
-
-    GetBucketPolicy(param: any, callback: any): any;
-
-    GetBucketQuota(param: any, callback: any): any;
-
-    GetBucketReplication(param: any, callback: any): any;
-
-    GetBucketRequesterPayment(param: any, callback: any): any;
-
-    GetBucketStorageInfo(param: any, callback: any): any;
-
-    GetBucketStoragePolicy(param: any, callback: any): any;
-
-    GetBucketTagging(param: any, callback: any): any;
-
-    GetBucketVersioning(param: any, callback: any): any;
-
-    GetBucketVersioningConfiguration(param: any, callback: any): any;
-
-    GetBucketWebsite(param: any, callback: any): any;
-
-    GetBucketWebsiteConfiguration(param: any, callback: any): any;
-
-    GetObject(param: any, callback: any): any;
-
-    GetObjectAcl(param: any, callback: any): any;
-
-    GetObjectMetadata(param: any, callback: any): any;
-
-    HeadBucket(param: any, callback: any): any;
-
-    InitLog(param: any): void;
-
-    InitiateMultipartUpload(param: any, callback: any): any;
-
-    ListBuckets(param: any, callback: any): any;
-
-    ListMultipartUploads(param: any, callback: any): any;
-
-    ListObjects(param: any, callback: any): any;
-
-    ListParts(param: any, callback: any): any;
-
-    ListVersions(param: any, callback: any): any;
-
-    OptionsBucket(param: any, callback: any): any;
-
-    OptionsObject(param: any, callback: any): any;
-
-    PutObject(param: any, callback: any): any;
-
-    Refresh(
-        access_key_id: any,
-        secret_access_key: any,
-        security_token: any
-    ): void;
-
-    RenameObject(param: any, callback: any): any;
-
-    RestoreObject(param: any, callback: any): any;
-
-    SetBucketAcl(param: any, callback: any): any;
-
-    SetBucketCors(param: any, callback: any): any;
-
-    SetBucketDirectColdAccess(param: any, callback: any): any;
-
-    SetBucketEncryption(param: any, callback: any): any;
-
-    SetBucketLifecycle(param: any, callback: any): any;
-
-    SetBucketLifecycleConfiguration(param: any, callback: any): any;
-
-    SetBucketLogging(param: any, callback: any): any;
-
-    SetBucketLoggingConfiguration(param: any, callback: any): any;
-
-    SetBucketNotification(param: any, callback: any): any;
-
-    SetBucketPolicy(param: any, callback: any): any;
-
-    SetBucketQuota(param: any, callback: any): any;
-
-    SetBucketReplication(param: any, callback: any): any;
-
-    SetBucketRequesterPayment(param: any, callback: any): any;
-
-    SetBucketStoragePolicy(param: any, callback: any): any;
-
-    SetBucketTagging(param: any, callback: any): any;
-
-    SetBucketVersioning(param: any, callback: any): any;
-
-    SetBucketVersioningConfiguration(param: any, callback: any): any;
-
-    SetBucketWebsite(param: any, callback: any): any;
-
-    SetBucketWebsiteConfiguration(param: any, callback: any): any;
-
-    SetObjectAcl(param: any, callback: any): any;
-
-    SetObjectMetadata(param: any, callback: any): any;
-
-    UploadFile(param: any, callback: any): any;
-
-    UploadPart(param: any, callback: any): any;
-
-    abortMultipartUpload(param: any, callback: any): any;
-
-    appendObject(param: any, callback: any): any;
+    appendObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     close(): void;
 
-    completeMultipartUpload(param: any, callback: any): any;
+    completeMultipartUpload(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    copyObject(param: any, callback: any): any;
+    copyObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    copyPart(param: any, callback: any): any;
+    copyPart(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    createBucket(param: any, callback: any): any;
+    createBucket(params: OBS.CreateBucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    createPostSignatureSync(param: any): any;
+    createPostSignatureSync(params: any): Promise<OBS.Result>;
 
-    createSignedUrlSync(param: any): any;
+    createSignedUrlSync(params: any): Promise<OBS.Result>;
 
-    createV2SignedUrlSync(param: any): any;
+    createV2SignedUrlSync(params: any): Promise<OBS.Result>;
 
-    createV4PostSignatureSync(param: any): any;
+    createV4PostSignatureSync(params: any): Promise<OBS.Result>;
 
-    createV4SignedUrlSync(param: any): any;
+    createV4SignedUrlSync(params: any): Promise<OBS.Result>;
 
-    deleteBucket(param: any, callback: any): any;
+    deleteBucket(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketCors(param: any, callback: any): any;
+    deleteBucketCors(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketDirectColdAccess(param: any, callback: any): any;
+    deleteBucketDirectColdAccess(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketEncryption(param: any, callback: any): any;
+    deleteBucketEncryption(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketLifecycle(param: any, callback: any): any;
+    deleteBucketLifecycle(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketLifecycleConfiguration(param: any, callback: any): any;
+    deleteBucketLifecycleConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketPolicy(param: any, callback: any): any;
+    deleteBucketPolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketReplication(param: any, callback: any): any;
+    deleteBucketReplication(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketTagging(param: any, callback: any): any;
+    deleteBucketTagging(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketWebsite(param: any, callback: any): any;
+    deleteBucketWebsite(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteBucketWebsiteConfiguration(param: any, callback: any): any;
+    deleteBucketWebsiteConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteObject(param: any, callback: any): any;
+    deleteObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    deleteObjects(param: any, callback: any): any;
+    deleteObjects(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    downloadFile(param: any, callback: any): any;
+    downloadFile(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    exec(funcName: any, param: any, callback: any): void;
+    exec(funcName: any, params: any, callback?: OBS.Callback): void;
 
-    factory(param: any): void;
+    factory(params: any): void;
 
-    getBucketAcl(param: any, callback: any): any;
+    getBucketAcl(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketCors(param: any, callback: any): any;
+    getBucketCors(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketDirectColdAccess(param: any, callback: any): any;
+    getBucketDirectColdAccess(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketEncryption(param: any, callback: any): any;
+    getBucketEncryption(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketLifecycle(param: any, callback: any): any;
+    getBucketLifecycle(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketLifecycleConfiguration(param: any, callback: any): any;
+    getBucketLifecycleConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketLocation(param: any, callback: any): any;
+    getBucketLocation(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketLogging(param: any, callback: any): any;
+    getBucketLogging(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketLoggingConfiguration(param: any, callback: any): any;
+    getBucketLoggingConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketMetadata(param: any, callback: any): any;
+    getBucketMetadata(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketNotification(param: any, callback: any): any;
+    getBucketNotification(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketPolicy(param: any, callback: any): any;
+    getBucketPolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketQuota(param: any, callback: any): any;
+    getBucketQuota(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketReplication(param: any, callback: any): any;
+    getBucketReplication(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketRequesterPayment(param: any, callback: any): any;
+    getBucketRequesterPayment(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketStorageInfo(param: any, callback: any): any;
+    getBucketStorageInfo(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketStoragePolicy(param: any, callback: any): any;
+    getBucketStoragePolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketTagging(param: any, callback: any): any;
+    getBucketTagging(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketVersioning(param: any, callback: any): any;
+    getBucketVersioning(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketVersioningConfiguration(param: any, callback: any): any;
+    getBucketVersioningConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketWebsite(param: any, callback: any): any;
+    getBucketWebsite(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getBucketWebsiteConfiguration(param: any, callback: any): any;
+    getBucketWebsiteConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getObject(param: any, callback: any): any;
+    getObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getObjectAcl(param: any, callback: any): any;
+    getObjectAcl(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    getObjectMetadata(param: any, callback: any): any;
+    getObjectMetadata(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    headBucket(param: any, callback: any): any;
+    headBucket(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    initLog(param: OBS.LogOptions): void;
+    initLog(params: OBS.LogOptions): void;
 
-    initiateMultipartUpload(param: any, callback: any): any;
+    initiateMultipartUpload(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    listBuckets(param: any, callback: any): any;
+    listBuckets(params: OBS.GetBucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    listMultipartUploads(param: any, callback: any): any;
+    listMultipartUploads(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    listObjects(param: any, callback: any): any;
+    listObjects(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    listParts(param: any, callback: any): any;
+    listParts(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    listVersions(param: any, callback: any): any;
+    listVersions(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    optionsBucket(param: any, callback: any): any;
+    optionsBucket(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    optionsObject(param: any, callback: any): any;
+    optionsObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    putObject(param: any, callback: any): any;
+    putObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     refresh(
         access_key_id: any,
@@ -419,53 +311,53 @@ declare class OBS {
         security_token: any
     ): void;
 
-    renameObject(param: any, callback: any): any;
+    renameObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    restoreObject(param: any, callback: any): any;
+    restoreObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketAcl(param: any, callback: any): any;
+    setBucketAcl(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketCors(param: any, callback: any): any;
+    setBucketCors(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketDirectColdAccess(param: any, callback: any): any;
+    setBucketDirectColdAccess(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketEncryption(param: any, callback: any): any;
+    setBucketEncryption(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketLifecycle(param: any, callback: any): any;
+    setBucketLifecycle(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketLifecycleConfiguration(param: any, callback: any): any;
+    setBucketLifecycleConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketLogging(param: any, callback: any): any;
+    setBucketLogging(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketLoggingConfiguration(param: any, callback: any): any;
+    setBucketLoggingConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketNotification(param: any, callback: any): any;
+    setBucketNotification(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketPolicy(param: any, callback: any): any;
+    setBucketPolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketQuota(param: any, callback: any): any;
+    setBucketQuota(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketReplication(param: any, callback: any): any;
+    setBucketReplication(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketRequesterPayment(param: any, callback: any): any;
+    setBucketRequesterPayment(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketStoragePolicy(param: any, callback: any): any;
+    setBucketStoragePolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketTagging(param: any, callback: any): any;
+    setBucketTagging(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketVersioning(param: any, callback: any): any;
+    setBucketVersioning(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketVersioningConfiguration(param: any, callback: any): any;
+    setBucketVersioningConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketWebsite(param: any, callback: any): any;
+    setBucketWebsite(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setBucketWebsiteConfiguration(param: any, callback: any): any;
+    setBucketWebsiteConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setObjectAcl(param: any, callback: any): any;
+    setObjectAcl(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    setObjectMetadata(param: any, callback: any): any;
+    setObjectMetadata(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    uploadFile(param: any, callback: any): any;
+    uploadFile(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    uploadPart(param: any, callback: any): any;
+    uploadPart(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 }
