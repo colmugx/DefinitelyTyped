@@ -16,3 +16,10 @@ obs.initLog({
     level: 'info',
     log_to_console: false,
 });
+
+obs.createBucket({
+    Bucket: 'bucket',
+    ACL: OBS.Acl.PublicReadWrite
+}).then(result => {
+    return result.CommonMsg.Code;
+});

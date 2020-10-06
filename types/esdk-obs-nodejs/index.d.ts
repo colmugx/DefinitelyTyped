@@ -1,5 +1,6 @@
 // TypeScript Version: 3.9.7
 // Project: https://github.com/huaweicloud/huaweicloud-sdk-nodejs-obs
+// Document Refrences: https://support.huaweicloud.com/intl/en-us/api-obs_nodejs_sdk_api_en/obs_39_0001.html
 // Definitions by: colmugx <https://github.com/colmugx>
 
 export = OBS;
@@ -9,90 +10,151 @@ export = OBS;
  */
 declare namespace OBS {
     type TimeoutRange = 10
-    | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
-    | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30
-    | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40
-    | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50
-    | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59 | 60
+        | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
+        | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30
+        | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40
+        | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50
+        | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59 | 60;
 
-    type MaxRetryCountRange = 1 | 2 | 3 | 4 | 5
+    type MaxRetryCountRange = 1 | 2 | 3 | 4 | 5;
+
+    type Callback = (err: any, result: Result) => any;
+
+    enum Acl {
+        Private = 'private',
+        PublicRead = 'public-read',
+        PublicReadWrite = 'public-read-write',
+        PublicReadDelivered = 'public-read-delivered',
+        PublicReadWriteDelivered = 'public-read-write-delivered',
+        AuthenticatedRead = 'authenticated-read',
+        BucketOwnerRead = 'bucket-owner-read',
+        BucketOwnerFullControl = 'bucket-owner-full-control',
+        LogDeliveryWrite = 'log-delivery-write',
+    }
+
+    enum StorageClass {
+        Standard = 'STANDARD',
+        Warm = 'WARM',
+        Cold = 'COLD',
+    }
+
+    enum Permission {
+        Read = 'READ',
+        Write = 'WRITE',
+        ReadAcp = 'READ_ACP',
+        WriteAcp = 'WRITE_ACP',
+        FullControl = 'FULL_CONTROL',
+    }
+
+    enum Group {
+        AllUsers = 'AllUsers',
+        AuthenticatedUsers = 'AuthenticatedUsers',
+        LogDelivery = 'LogDelivery',
+    }
+
+    enum RestoreTier {
+        Expedited = 'Expedited',
+        Standard = 'Standard',
+        Bulk = 'Bulk',
+    }
+
+    enum Grantee {
+        Group = 'Group',
+        User = 'CanonicalUser',
+    }
+
+    enum Metadata {
+        Copy = 'COPY',
+        Replace = 'REPLACE',
+    }
+
+    enum EventObject {
+        CreatedAll = 'ObjectCreated:*',
+        CreatedPut = 'ObjectCreated:Put',
+        CreatedPost = 'ObjectCreated:Post',
+        CreatedCopy = 'ObjectCreated:Copy',
+        CreatedCompleteMultipartUpload = 'ObjectCreated:CompleteMultipartUpload',
+        RemovedAll = 'ObjectRemoved:*',
+        RemovedDelete = 'ObjectRemoved:Delete',
+        RemovedDeleteMarkerCreated = 'ObjectRemoved:DeleteMarkerCreated',
+    }
 
     interface Options {
         /**
          * AK
          */
-        access_key_id: string
+        access_key_id: string;
         /**
          * SK
          */
-        secret_access_key: string
+        secret_access_key: string;
         /**
          * Endpoint for accessing OBS, which contains the protocol type, domain name (or IP address), and port number.
          * For example, https://your-endpoint:443
          */
-        server: string
+        server: string;
         /**
          * Maximum number of retries when an HTTP/HTTPS connection is abnormal.
          * The default value is 3.
          */
-        max_retry_count?: MaxRetryCountRange
+        max_retry_count?: MaxRetryCountRange;
         /**
          * Timeout period (in seconds) of an HTTP/HTTPS request.
          * The default value is 60.
          */
-        timeout?: TimeoutRange
+        timeout?: TimeoutRange;
         /**
          * Whether to verify the server certificate. Possible values are:
          * - Path to the server-side root certificate file in .pem format
          * - true: The default CAs are used to verify the server-side certificate.
          * - false: The server-side certificates will not be verified.
          */
-        ssl_verify?: boolean | string
+        ssl_verify?: boolean | string;
         /**
          * Persistent connection mode (in seconds) If the value is equal to or larger than 0,
          * the persistent connection mode is enabled and this value is used as the initial delay of the TCP Keep-Alive packets.
          */
-        long_conn_param?: number
+        long_conn_param?: number;
         /**
          * Whether to use self-defined domain name to access OBS.
          * The default value is false.
          */
-        is_cname?: boolean
+        is_cname?: boolean;
     }
 
     interface LogOptions {
         /**
          * Full path to the log file
          */
-        file_full_path: string
+        file_full_path: string;
         /**
          * Log file size in bytes
          */
-        max_log_size: string | number
+        max_log_size: string | number;
         /**
          * Maximum number of retained log files
          */
-        backups: string | number
+        backups: string | number;
         /**
          * Log level. Possible values are debug, info, warn, and error.
          */
-        level: 'debug' | 'info' | 'warn' | 'error'
+        level: 'debug' | 'info' | 'warn' | 'error';
         /**
          * Whether to print logs to the console
          */
-        log_to_console?: boolean
+        log_to_console?: boolean;
         /**
          * Log name.
          * When there are multiple instances of ObsClient, this parameter is used to identify log files.
          */
-        name?: string
+        name?: string;
     }
 
     interface InterfaceResult {
-        RequestId: string
-        Id2: string
+        RequestId: string;
+        Id2: string;
         // TODO: generics
-        [k: string]: any
+        [k: string]: any;
     }
 
     interface CommonMsg {
@@ -100,43 +162,41 @@ declare namespace OBS {
          * HTTP status code. If the value is smaller than 300, the operation succeeds.
          * Otherwise, the operation fails.
          */
-        Status: number
+        Status: number;
         /**
          * Error code returned by the OBS server.
          * If Status is smaller than 300, the value is null.
          */
-        Code: string
+        Code: string;
         /**
          * Error description returned by the OBS server.
          * If Status is smaller than 300, the value is null.
          */
-        Message: string
+        Message: string;
         /**
          * Server ID.
          * If Status is smaller than 300, the value is null.
          */
-        HostId: string
+        HostId: string;
         /**
          * Request ID returned by the OBS server
          */
-        RequestId: string
+        RequestId: string;
         /**
          * Request ID2 returned by the OBS server
          */
-        Id2: string
+        Id2: string;
         /**
          * Detailed error code returned by the OBS server.
          * If Status is smaller than 300, the value is null.
          */
-        Indicator: string
+        Indicator: string;
     }
 
     interface Result {
-        InterfaceResult: InterfaceResult
-        CommonMsg: CommonMsg
+        InterfaceResult: InterfaceResult;
+        CommonMsg: CommonMsg;
     }
-
-    type Callback = (err: any, result: Result) => any
 }
 
 /**
@@ -147,30 +207,93 @@ declare namespace OBS {
         /**
          * Bucket name.
          */
-        Bucket: string
+        Bucket: string;
+    }
+
+    interface BucketACL extends Bucket {
+        /**
+         * Pre-defined access control policy that can be specified during the bucket creation
+         */
+        ACL?: Acl;
+        /**
+         * Bucket owner
+         */
+        Owner?: {
+            /** ID of the domain to which the bucket owner belongs */
+            ID: string;
+        };
+        /**
+         * List of grantees' permission information
+         */
+        Grants?: {
+            Grantee: {
+                /** Grantee Types */
+                Type: Grantee;
+                /** ID of the domain to which the grantee belongs */
+                ID?: string;
+                /** Group */
+                URI?: Group;
+            };
+            Permission: Permission;
+            /** Whether an object inherits the ACL of its residing bucket */
+            Delivered?: boolean;
+        }[];
+    }
+
+    interface BucketPolicy extends Bucket {
+        /**
+         * Policy information in the JSON format.
+         */
+        Policy: string
+    }
+
+    interface BucketStorageQuota extends Bucket {
+        /**
+         * Bucket quota.
+         * The value is a non-negative **integer**.
+         */
+        StorageQuota: number
+    }
+
+    interface BucketStorageClass extends  Bucket {
+        /**
+         * Storage class of the bucket
+         */
+        StorageClass: StorageClass
     }
 
     interface CreateBucket extends Bucket {
         /**
          * Pre-defined access control policy that can be specified during the bucket creation
          */
-        ACL?: string
-        // TODO: bucket region
+        ACL?: Acl;
         /**
          * Bucket storage class that can be specified during the bucket creation
          */
-        StorageClass?: string
+        StorageClass?: StorageClass;
         /**
          * Bucket location
          */
-        Location?: string
+        Location?: string;
     }
 
     interface GetBucket {
         /**
          * Whether to query the bucket location
          */
-        QueryLocation?: boolean
+        QueryLocation?: boolean;
+    }
+
+    interface BucketMetadata extends Bucket {
+        /**
+         * Origin of the cross-domain request specified by the pre-request.
+         * Generally, it is a domain name.
+         */
+        Origin?: string;
+        /**
+         * HTTP headers in the cross-domain request
+         */
+        RequestHeader?: string;
     }
 }
 
@@ -188,7 +311,11 @@ declare class OBS {
     copyObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     copyPart(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
+    /**
+     * Create a bucket
+     * @param params create params
+     * @param callback callback
+     */
     createBucket(params: OBS.CreateBucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     createPostSignatureSync(params: any): Promise<OBS.Result>;
@@ -201,6 +328,11 @@ declare class OBS {
 
     createV4SignedUrlSync(params: any): Promise<OBS.Result>;
 
+    /**
+     * Delete a bucket
+     * @param params params
+     * @param callback callback
+     */
     deleteBucket(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     deleteBucketCors(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
@@ -212,8 +344,12 @@ declare class OBS {
     deleteBucketLifecycle(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     deleteBucketLifecycleConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    deleteBucketPolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Deleting a Bucket Policy
+     * @param params params
+     * @param callback callback
+     */
+    deleteBucketPolicy(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     deleteBucketReplication(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -232,8 +368,12 @@ declare class OBS {
     exec(funcName: any, params: any, callback?: OBS.Callback): void;
 
     factory(params: any): void;
-
-    getBucketAcl(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * get the bucket ACL
+     * @param params params
+     * @param callback callback
+     */
+    getBucketAcl(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketCors(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -244,28 +384,52 @@ declare class OBS {
     getBucketLifecycle(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketLifecycleConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    getBucketLocation(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Obtaining a Bucket Location
+     * @param params params
+     * @param callback callback
+     */
+    getBucketLocation(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketLogging(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketLoggingConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    getBucketMetadata(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Obtain the bucket metadata
+     * @param params params
+     * @param callback callback
+     */
+    getBucketMetadata(params: OBS.BucketMetadata, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketNotification(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    getBucketPolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    getBucketQuota(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Obtaining a Bucket Policy
+     * @param params params
+     * @param callback callback
+     */
+    getBucketPolicy(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Obtaining a Bucket Quota
+     * @param params params
+     * @param callback callback
+     */
+    getBucketQuota(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketReplication(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketRequesterPayment(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    getBucketStorageInfo(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    getBucketStoragePolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Obtaining Storage Information About a Bucket
+     * @param params params
+     * @param callback callback
+     */
+    getBucketStorageInfo(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Obtaining the Storage Class of a Bucket
+     * @param params params
+     * @param callback callback
+     */
+    getBucketStoragePolicy(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketTagging(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -282,13 +446,21 @@ declare class OBS {
     getObjectAcl(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getObjectMetadata(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
+    /**
+     * Identifying Whether a Bucket Exists
+     * @param params params
+     * @param callback callback
+     */
     headBucket(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     initLog(params: OBS.LogOptions): void;
 
     initiateMultipartUpload(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
+    /**
+     * List buckets
+     * @param params params
+     * @param callback callback
+     */
     listBuckets(params: OBS.GetBucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     listMultipartUploads(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
@@ -305,17 +477,17 @@ declare class OBS {
 
     putObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    refresh(
-        access_key_id: any,
-        secret_access_key: any,
-        security_token: any
-    ): void;
+    refresh(access_key_id: any, secret_access_key: any, security_token: any): void;
 
     renameObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     restoreObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    setBucketAcl(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * set the bucket ACL
+     * @param params params
+     * @param callback callback
+     */
+    setBucketAcl(params: OBS.BucketACL, callback?: OBS.Callback): Promise<OBS.Result>;
 
     setBucketCors(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -332,16 +504,28 @@ declare class OBS {
     setBucketLoggingConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     setBucketNotification(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    setBucketPolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    setBucketQuota(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Setting a Bucket Policy
+     * @param params params
+     * @param callback callback
+     */
+    setBucketPolicy(params: OBS.BucketPolicy, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Setting a Bucket Quota
+     * @param params params
+     * @param callback callback
+     */
+    setBucketQuota(params: OBS.BucketStorageQuota, callback?: OBS.Callback): Promise<OBS.Result>;
 
     setBucketReplication(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     setBucketRequesterPayment(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
-
-    setBucketStoragePolicy(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Setting the Storage Class for a Bucket
+     * @param params params
+     * @param callback callback
+     */
+    setBucketStoragePolicy(params: OBS.BucketStorageClass, callback?: OBS.Callback): Promise<OBS.Result>;
 
     setBucketTagging(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
