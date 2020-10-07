@@ -20,6 +20,8 @@ declare namespace OBS {
 
     type Callback = (err: any, result: Result) => any;
 
+    type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD'
+
     enum Acl {
         Private = 'private',
         PublicRead = 'public-read',
@@ -295,26 +297,321 @@ declare namespace OBS {
          */
         RequestHeader?: string;
     }
+
+    interface ListMultipart extends Bucket {
+        /**
+         * Character used to group object names involved in multipart uploads.
+         */
+        Delimiter?: string
+        /**
+         * Prefix that the object names in the multipart uploads to be listed must contain
+         */
+        Prefix?: string
+        /**
+         * Maximum number of returned multipart uploads.
+         * The value ranges from 1 to 1000.
+         * If the value is not in this range, 1000 is returned by default.
+         */
+        MaxUploads?: number
+        /**
+         * Object name to start with when listing multipart uploads
+         */
+        KeyMarker?: string
+        /**
+         * Upload ID after which the multipart upload listing begins.
+         * It is effective only when used with KeyMarker,
+         * so that multipart uploads after UploadIdMarker of KeyMarker will be listed.
+         */
+        UploadIdMarker?: string
+    }
+}
+
+/**
+ * object
+ */
+declare namespace OBS {
+    interface Object extends Bucket {
+        /**
+         * Object name
+         */
+        Key: string
+    }
+
+    interface ObjectCommonOptions extends Object {
+        /**
+         * ACL
+         */
+        ACL?: Acl
+        /**
+         * Storage class of the bucket
+         */
+        StorageClass?: StorageClass
+        /**
+         * Customized metadata of the object
+         */
+        Metadata?: { [k: string]: any }
+        /**
+         * Location where the object is redirected to, when the bucket is configured with website hosting
+         */
+        WebsiteRedirectLocation?: string
+        /**
+         * Expiration time of the object, in days
+         */
+        Expires?: number
+        /**
+         * MIME type of the object
+         */
+        ContentType?: string
+        /**
+         * Algorithm used in SSE-KMS encryption.
+         */
+        SseKms?: string
+        /**
+         * Master key used in SSE-KMS encryption. This field can be null.
+         */
+        SseKmsKey?: string
+        /**
+         * Algorithm used in SSE-C encryption.
+         */
+        SseC?: string
+        /**
+         * Key used to encrypt the object in SSE-C mode, which is calculated by using AES256
+         */
+        SseCKey?: any
+    }
+
+    interface PutObject extends ObjectCommonOptions {
+        /**
+         * Content of the object to be uploaded.
+         * Both character strings and instances of stream.Readable are supported.
+         * Type: String | stream.Readable
+         */
+        Body?: any
+        /**
+         * Start offset (in bytes) of a part in the source file.
+         * This field is effective when SourceFile is set and its default value is 0.
+         */
+        Offset?: number
+        /**
+         * Path to the source file of the object
+         */
+        SourceFile?: string
+        /**
+         * Callback function for obtaining the upload progress
+         */
+        ProgressCallback?: (...args: any[]) => any;
+        /**
+         * Redirection address after the upload is successful
+         */
+        SuccessActionRedirect?: string
+        /**
+         * Object length.
+         * This field is effective when SourceFile is set.
+         */
+        ContentLength?: number
+        /**
+         * MD5 value of the object (Base64-encoded).
+         * It is provided for the OBS server to verify data integrity.
+         */
+        ContentMD5?: string
+    }
+
+    interface CopyObject extends ObjectCommonOptions {
+        /**
+         * Parameter used to specify the source bucket, source object, and source object version ID which can be null.
+         * It is in the format of SourceBucketName/SourceObjectName?versionId=SourceObjectVersionId.
+         */
+        CopySource: string
+        /**
+         * Copies the source object if its ETag is the same as the one specified by this parameter;
+         * otherwise, an error code is returned.
+         */
+        CopySourceIfMatch?: string
+        /**
+         * Copies the source object if it is changed after the time specified by this parameter;
+         * otherwise, an error code is returned.
+         * This parameter must conform with the HTTP time format specified in http://www.ietf.org/rfc/rfc2616.txt.
+         */
+        CopySourceIfModifiedSince?: string
+        /**
+         * Copies the source object if its ETag is different from the one specified by this parameter;
+         * otherwise, an error code is returned.
+         */
+        CopySourceIfNoneMatch?: string
+        /**
+         * Copies the source object if it is changed before the time specified by this parameter;
+         * otherwise, an error code is returned.
+         * This parameter must conform with the HTTP time format specified in http://www.ietf.org/rfc/rfc2616.txt.
+         */
+        CopySourceIfUnmodifiedSince?: string
+        /**
+         * When an object is copied, this parameter rewrites the Cache-Control header in the response.
+         */
+        CacheControl?: string
+        /**
+         * When an object is copied, this parameter rewrites the Content-Disposition header in the response.
+         */
+        ContentDisposition?: string
+        /**
+         * When an object is copied, this parameter rewrites the Content-Encoding header in the response.
+         */
+        ContentEncoding?: string
+        /**
+         * When an object is copied, this parameter rewrites the Content-Language header in the response.
+         */
+        ContentLanguage?: string
+    }
+
+    interface ObjectPart extends Object {
+        /**
+         * Part number, which ranges from 1 to 10000
+         */
+        PartNumber: number
+        /**
+         * Multipart upload ID
+         */
+        UploadId: string
+        /**
+         * Base64-encoded MD5 value of the part to be uploaded.
+         * It is provided for the OBS server to verify data integrity.
+         */
+        ContentMD5?: string
+        /**
+         * Content of the part.
+         * Both character strings and instances of stream.Readable are supported.
+         */
+        Body?: any
+        /**
+         * Path to the source file of the part
+         */
+        SourceFile?: string
+        /**
+         * Start offset (in bytes) of a part in the source file.
+         * This field is effective when SourceFile is set and its default value is 0.
+         */
+        Offset?: number
+        /**
+         * Size (in bytes) of a part in the source file.
+         * This field is effective when SourceFile is set and its default value is file size minus Offset.
+         * Except for the part lastly being uploaded whose size ranging from 0 to 5 GB, sizes of the other parts range from 100 KB to 5 GB.
+         */
+        PartSize?: number
+        /**
+         * Algorithm used in SSE-C encryption. The value can be:
+         * - AES256
+         */
+        SseC?: string
+        /**
+         * Key used to encrypt the object in SSE-C mode, which is calculated by using AES256
+         */
+        SseCKey?: any
+    }
+
+    interface Multipart extends Object {
+        /**
+         * Multipart upload ID
+         */
+        UploadId: string
+    }
+
+    interface CompleteMultipart extends Multipart {
+        /**
+         * List of parts to be combined
+         */
+        Parts: {
+            /** Part number */
+            PartNumber: string
+            /** Part ETag */
+            ETag: string
+        }[]
+    }
+
+    interface ListPart extends Multipart {
+        /**
+         * Maximum number of uploaded parts that can be listed per page
+         */
+        MaxParts?: number
+        /**
+         * Part number after which listing uploaded parts begins.
+         * Only parts whose part numbers are larger than this value will be listed.
+         */
+        PartNumberMarker?: number
+    }
+
+    interface CopyPart extends Multipart {
+        /**
+         * Part number, which ranges from 1 to 10000
+         */
+        PartNumber: number
+        /**
+         * Parameter used to specify the source bucket, source object, and source object version ID which can be null.
+         * It is in the format of SourceBucketName/SourceObjectName?versionId=SourceObjectVersionId.
+         */
+        CopySource: string
+        /**
+         * Copy source range. The value range is [0, source object length-1] and is in the format of bytes=x-y.
+         */
+        CopySourceRange?: string
+        /**
+         * Algorithm used to encrypt a target part in SSE-C mode. The value can be:
+         * - AES256
+         */
+        SseC?: string
+        /**
+         * Key used to encrypt a target part in SSE-C mode, which is calculated by using the AES256 algorithm.
+         */
+        SseCKey?: any
+        /**
+         * Algorithm used to encrypt a target part in SSE-C mode. The value can be:
+         * - AES256
+         */
+        CopySourceSseC?: string
+        /**
+         * Key used to decrypt a source object in SSE-C mode, which is calculated by using the AES256 algorithm.
+         */
+        CopySourceSseCKey?: any
+    }
+
+    interface Objects extends Bucket {
+
+    }
 }
 
 declare class OBS {
     constructor(params: OBS.Options);
 
-    abortMultipartUpload(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Abort Multipart Upload
+     */
+    abortMultipartUpload(params: OBS.Multipart, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    appendObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Append Object
+     */
+    appendObject(params: OBS.CreateBucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
+    /**
+     * close connection
+     */
     close(): void;
 
-    completeMultipartUpload(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Complete Multipart Upload
+     */
+    completeMultipartUpload(params: OBS.CompleteMultipart, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    copyObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * PUT Object - Copy
+     */
+    copyObject(params: OBS.CopyObject, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    copyPart(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * PUT Part - Copy
+     */
+    copyPart(params: OBS.CopyPart, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Create a bucket
-     * @param params create params
-     * @param callback callback
      */
     createBucket(params: OBS.CreateBucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -330,8 +627,6 @@ declare class OBS {
 
     /**
      * Delete a bucket
-     * @param params params
-     * @param callback callback
      */
     deleteBucket(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -344,10 +639,9 @@ declare class OBS {
     deleteBucketLifecycle(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     deleteBucketLifecycleConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Deleting a Bucket Policy
-     * @param params params
-     * @param callback callback
      */
     deleteBucketPolicy(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -368,10 +662,9 @@ declare class OBS {
     exec(funcName: any, params: any, callback?: OBS.Callback): void;
 
     factory(params: any): void;
+
     /**
      * get the bucket ACL
-     * @param params params
-     * @param callback callback
      */
     getBucketAcl(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -384,50 +677,44 @@ declare class OBS {
     getBucketLifecycle(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketLifecycleConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Obtaining a Bucket Location
-     * @param params params
-     * @param callback callback
      */
     getBucketLocation(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketLogging(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketLoggingConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Obtain the bucket metadata
-     * @param params params
-     * @param callback callback
      */
     getBucketMetadata(params: OBS.BucketMetadata, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketNotification(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Obtaining a Bucket Policy
-     * @param params params
-     * @param callback callback
      */
     getBucketPolicy(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Obtaining a Bucket Quota
-     * @param params params
-     * @param callback callback
      */
     getBucketQuota(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketReplication(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getBucketRequesterPayment(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Obtaining Storage Information About a Bucket
-     * @param params params
-     * @param callback callback
      */
     getBucketStorageInfo(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Obtaining the Storage Class of a Bucket
-     * @param params params
-     * @param callback callback
      */
     getBucketStoragePolicy(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -446,28 +733,38 @@ declare class OBS {
     getObjectAcl(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     getObjectMetadata(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Identifying Whether a Bucket Exists
-     * @param params params
-     * @param callback callback
      */
     headBucket(params: OBS.Bucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
+    /**
+     * Initializing Logs
+     */
     initLog(params: OBS.LogOptions): void;
 
-    initiateMultipartUpload(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * Initiate Multipart Upload
+     */
+    initiateMultipartUpload(params: OBS.ObjectCommonOptions, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * List buckets
-     * @param params params
-     * @param callback callback
      */
     listBuckets(params: OBS.GetBucket, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    listMultipartUploads(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * List Multipart uploads
+     */
+    listMultipartUploads(params: OBS.ListMultipart, callback?: OBS.Callback): Promise<OBS.Result>;
 
     listObjects(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    listParts(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * List Parts
+     */
+    listParts(params: OBS.ListPart, callback?: OBS.Callback): Promise<OBS.Result>;
 
     listVersions(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -475,17 +772,19 @@ declare class OBS {
 
     optionsObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    putObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * put object
+     */
+    putObject(params: OBS.PutObject, callback?: OBS.Callback): Promise<OBS.Result>;
 
     refresh(access_key_id: any, secret_access_key: any, security_token: any): void;
 
     renameObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     restoreObject(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * set the bucket ACL
-     * @param params params
-     * @param callback callback
      */
     setBucketAcl(params: OBS.BucketACL, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -504,26 +803,23 @@ declare class OBS {
     setBucketLoggingConfiguration(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     setBucketNotification(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Setting a Bucket Policy
-     * @param params params
-     * @param callback callback
      */
     setBucketPolicy(params: OBS.BucketPolicy, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Setting a Bucket Quota
-     * @param params params
-     * @param callback callback
      */
     setBucketQuota(params: OBS.BucketStorageQuota, callback?: OBS.Callback): Promise<OBS.Result>;
 
     setBucketReplication(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
     setBucketRequesterPayment(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+
     /**
      * Setting the Storage Class for a Bucket
-     * @param params params
-     * @param callback callback
      */
     setBucketStoragePolicy(params: OBS.BucketStorageClass, callback?: OBS.Callback): Promise<OBS.Result>;
 
@@ -543,5 +839,8 @@ declare class OBS {
 
     uploadFile(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
 
-    uploadPart(params: any, callback?: OBS.Callback): Promise<OBS.Result>;
+    /**
+     * PUT Part
+     */
+    uploadPart(params: OBS.ObjectPart, callback?: OBS.Callback): Promise<OBS.Result>;
 }
